@@ -65,7 +65,8 @@ def seed_data():
     from app.models import Product, SiteConfig
     if Product.query.count() == 0:
         products = [
-            Product(name='Mango Juice', size='250ml', price=50.0, status='available', image='product-2.jpg,product-4.jpg'),
+            Product(name='Mango Juice', size='250ml', price=50.0,
+                     status='available', image='product-2.jpg,product-4.jpg'),
             Product(name='Mango Juice', size='1L', price=None, status='coming_soon', image=None),
             Product(name='Mixed Fruit', size='250ml', price=60.0, status='coming_soon', image=None),
             Product(name='Orange Juice', size='250ml', price=55.0, status='coming_soon', image=None),
