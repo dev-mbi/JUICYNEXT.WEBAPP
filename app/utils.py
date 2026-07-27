@@ -1,5 +1,6 @@
 import urllib.parse
 
+
 def create_whatsapp_link(data, number):
     message = f"""Hello JuicyneXt
 I want to order:

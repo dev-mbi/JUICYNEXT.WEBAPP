@@ -6,6 +6,7 @@ import re
 
 order_bp = Blueprint('order', __name__)
 
+
 def validate_pakistan_phone(phone):
     cleaned = re.sub(r'[\s\-\(\)]', '', phone)
     if re.match(r'^03\d{9}$', cleaned):
@@ -17,6 +18,7 @@ def validate_pakistan_phone(phone):
     if re.match(r'^3\d{9}$', cleaned):
         return True, '92' + cleaned
     return False, None
+
 
 @order_bp.route('/submit-order', methods=['POST'])
 def submit_order():

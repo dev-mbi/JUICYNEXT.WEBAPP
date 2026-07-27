@@ -11,6 +11,7 @@ db = SQLAlchemy()
 csrf = CSRFProtect()
 limiter = Limiter(key_func=get_remote_address)
 
+
 def create_app():
     app = Flask(__name__, template_folder='../templates', static_folder='../static')
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'juicynext-dev-key')
@@ -54,11 +55,11 @@ def create_app():
     app.register_blueprint(admin_bp, url_prefix='/admin')
 
     with app.app_context():
-        from app.models import Product, Order, SiteConfig
         db.create_all()
         seed_data()
 
     return app
+
 
 def seed_data():
     from app.models import Product, SiteConfig

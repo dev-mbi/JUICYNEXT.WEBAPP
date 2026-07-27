@@ -15,6 +15,7 @@ MAX_IMAGE_SIZE = 5 * 1024 * 1024
 ADMIN_USER = os.environ.get('ADMIN_USERNAME', 'admin')
 ADMIN_PASS_HASH = generate_password_hash(os.environ.get('ADMIN_PASSWORD', 'admin123'))
 
+
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -23,8 +24,10 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated
 
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 def validate_product(name, size, price_str, status):
     errors = []
@@ -47,6 +50,7 @@ def validate_product(name, size, price_str, status):
         errors.append('Invalid status')
     return errors
 
+
 @admin_bp.route('/login', methods=['GET', 'POST'])
 @limiter.limit("10 per minute")
 def login():
@@ -59,10 +63,12 @@ def login():
         flash('Invalid credentials')
     return render_template('admin/login.html')
 
+
 @admin_bp.route('/logout')
 def logout():
     session.pop('admin_logged_in', None)
     return redirect('/admin/login')
+
 
 @admin_bp.route('/')
 @login_required
@@ -70,6 +76,7 @@ def dashboard():
     product_count = Product.query.count()
     order_count = Order.query.count()
     return render_template('admin/dashboard.html', product_count=product_count, order_count=order_count)
+
 
 @admin_bp.route('/products')
 @login_required
@@ -81,6 +88,7 @@ def product_list():
         query = query.filter(Product.name.ilike(f'%{search}%'))
     products = query.order_by(Product.created_at.desc()).paginate(page=page, per_page=10, error_out=False)
     return render_template('admin/products.html', products=products, search=search)
+
 
 @admin_bp.route('/products/add', methods=['GET', 'POST'])
 @login_required
@@ -119,6 +127,7 @@ def add_product():
         flash('Product added')
         return redirect('/admin/products')
     return render_template('admin/product_form.html')
+
 
 @admin_bp.route('/products/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -163,6 +172,7 @@ def edit_product(id):
         return redirect('/admin/products')
     return render_template('admin/product_form.html', product=product)
 
+
 @admin_bp.route('/products/delete/<int:id>', methods=['POST'])
 @login_required
 def delete_product(id):
@@ -178,6 +188,7 @@ def delete_product(id):
     flash('Product deleted')
     return redirect('/admin/products')
 
+
 @admin_bp.route('/products/toggle/<int:id>', methods=['POST'])
 @login_required
 def toggle_product(id):
@@ -188,6 +199,7 @@ def toggle_product(id):
     db.session.commit()
     flash(f'Product status changed to {product.status}')
     return redirect('/admin/products')
+
 
 @admin_bp.route('/orders')
 @login_required
@@ -203,6 +215,7 @@ def order_list():
     orders = query.order_by(Order.created_at.desc()).paginate(page=page, per_page=10, error_out=False)
     return render_template('admin/orders.html', orders=orders, status_filter=status_filter, search=search)
 
+
 @admin_bp.route('/orders/<int:id>')
 @login_required
 def order_detail(id):
@@ -210,6 +223,7 @@ def order_detail(id):
     if not order:
         abort(404)
     return render_template('admin/order_detail.html', order=order)
+
 
 @admin_bp.route('/orders/<int:id>/status', methods=['POST'])
 @login_required
@@ -223,6 +237,7 @@ def update_order_status(id):
         db.session.commit()
         flash(f'Order #{order.id} status updated to {new_status}')
     return redirect('/admin/orders')
+
 
 @admin_bp.route('/settings', methods=['GET', 'POST'])
 @login_required
