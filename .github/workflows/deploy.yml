@@ -50,7 +50,7 @@ jobs:
           chmod 600 key.pem
           ssh -o StrictHostKeyChecking=no -i key.pem $SERVER_USER@$SERVER_HOST "
             cd /opt/juicynext &&
-            git pull origin main &&
+            git stash && git pull origin main &&
             docker compose down &&
             docker compose build --no-cache web &&
             docker compose up -d
