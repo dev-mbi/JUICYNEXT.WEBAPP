@@ -1,0 +1,42 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Manage Products{% endblock %}
+{% block content %}
+<div class="admin-header">
+    <h1>Products</h1>
+    <a href="/admin/products/add" class="btn btn-primary btn-small">Add Product</a>
+</div>
+<table class="admin-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Size</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in products %}
+        <tr>
+            <td>{{ product.id }}</td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.size }}</td>
+            <td>{% if product.price %}Rs. {{ product.price }}{% else %}--{% endif %}</td>
+            <td><span class="badge badge-{{ product.status }}">{{ product.status }}</span></td>
+            <td class="actions">
+                <a href="/admin/products/edit/{{ product.id }}" class="btn btn-small btn-outline">Edit</a>
+                <form method="POST" action="/admin/products/toggle/{{ product.id }}" style="display:inline">
+                    <button type="submit" class="btn btn-small btn-outline">
+                        {% if product.status == 'available' %}Disable{% else %}Enable{% endif %}
+                    </button>
+                </form>
+                <form method="POST" action="/admin/products/delete/{{ product.id }}" style="display:inline" onsubmit="return confirm('Delete this product?')">
+                    <button type="submit" class="btn btn-small btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

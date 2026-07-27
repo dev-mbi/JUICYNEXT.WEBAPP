@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="hero-title">Fresh Juice, Delivered to Your Doorstep</h1>
+            <p class="hero-subtitle">Natural, refreshing mango juice made from real fruits. Order now and taste the difference.</p>
+            <a href="/products" class="btn btn-primary">Shop Now</a>
+        </div>
+    </div>
+</section>
+
+<section class="section featured-products">
+    <div class="container">
+        <h2 class="section-title">Our Products</h2>
+        <div class="product-grid">
+            {% set products = namespace(items=[]) %}
+            {% for p in [{'name': 'Mango Juice', 'size': '250ml', 'price': 50, 'status': 'available', 'image': 'mango-250ml.jpg'}, {'name': 'Mango Juice', 'size': '1L', 'status': 'coming_soon', 'image': None}] %}
+            <div class="product-card">
+                <div class="product-image">
+                    {% if p.image %}
+                    <img src="{{ url_for('static', filename='images/' + p.image) }}" alt="{{ p.name }}">
+                    {% else %}
+                    <div class="product-image-placeholder">{{ p.name }}</div>
+                    {% endif %}
+                    {% if p.status == 'coming_soon' %}
+                    <span class="badge badge-coming-soon">Coming Soon</span>
+                    {% endif %}
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">{{ p.name }}</h3>
+                    <p class="product-size">{{ p.size }}</p>
+                    {% if p.status == 'available' %}
+                    <p class="product-price">Rs. {{ p.price }}</p>
+                    <a href="/order/1" class="btn btn-primary btn-small">Buy Now</a>
+                    {% else %}
+                    <p class="product-price">--</p>
+                    <button class="btn btn-disabled btn-small" disabled>Coming Soon</button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section benefits">
+    <div class="container">
+        <h2 class="section-title">Why JuicyneXt?</h2>
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="benefit-icon">100% Natural</div>
+                <h3>Pure & Natural</h3>
+                <p>Made from real fruits with no artificial flavors or preservatives.</p>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon">Delivered Fresh</div>
+                <h3>Doorstep Delivery</h3>
+                <p>Fresh juice delivered to your home. Order via WhatsApp and we handle the rest.</p>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon">Great Taste</div>
+                <h3>Amazing Taste</h3>
+                <p>Our mango juice is loved by customers across Pakistan for its authentic flavor.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section cta-section">
+    <div class="container">
+        <h2>Ready to Order?</h2>
+        <p>Order a bottle of fresh mango juice today.</p>
+        <a href="/order/1" class="btn btn-primary btn-large">Order Now</a>
+    </div>
+</section>
+{% endblock %}

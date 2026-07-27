@@ -1,0 +1,37 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}{% if product %}Edit Product{% else %}Add Product{% endif %}{% endblock %}
+{% block content %}
+<h1>{% if product %}Edit Product{% else %}Add Product{% endif %}</h1>
+<form method="POST" enctype="multipart/form-data" class="admin-form">
+    <div class="form-group">
+        <label for="name">Product Name</label>
+        <input type="text" id="name" name="name" value="{{ product.name if product else '' }}" required>
+    </div>
+    <div class="form-group">
+        <label for="size">Size</label>
+        <input type="text" id="size" name="size" value="{{ product.size if product else '' }}" required placeholder="e.g. 250ml, 1L">
+    </div>
+    <div class="form-group">
+        <label for="price">Price (PKR)</label>
+        <input type="number" id="price" name="price" value="{{ product.price if product and product.price else '' }}" step="0.01" placeholder="Leave empty for coming soon">
+    </div>
+    <div class="form-group">
+        <label for="status">Status</label>
+        <select id="status" name="status">
+            <option value="available" {% if product and product.status == 'available' %}selected{% endif %}>Available</option>
+            <option value="coming_soon" {% if product and product.status == 'coming_soon' %}selected{% endif %}>Coming Soon</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="image">Product Image</label>
+        <input type="file" id="image" name="image" accept="image/*">
+        {% if product and product.image %}
+        <p class="form-note">Current: {{ product.image }}</p>
+        {% endif %}
+    </div>
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{% if product %}Update{% else %}Add{% endif %} Product</button>
+        <a href="/admin/products" class="btn btn-outline">Cancel</a>
+    </div>
+</form>
+{% endblock %}

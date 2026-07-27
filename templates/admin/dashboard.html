@@ -1,0 +1,22 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Dashboard</h1>
+<div class="dashboard-cards">
+    <div class="dash-card">
+        <h3>{{ product_count }}</h3>
+        <p>Products</p>
+        <a href="/admin/products" class="dash-link">Manage Products</a>
+    </div>
+    <div class="dash-card">
+        <h3>{{ order_count }}</h3>
+        <p>Orders</p>
+        <a href="/admin/orders" class="dash-link">View Orders</a>
+    </div>
+    <div class="dash-card">
+        <h3>Settings</h3>
+        <p>Price & WhatsApp</p>
+        <a href="/admin/settings" class="dash-link">Manage Settings</a>
+    </div>
+</div>
+{% endblock %}

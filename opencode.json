@@ -1,0 +1,23 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "skills": {
+    "paths": [".opencode/skills"]
+  },
+  "agent": {
+    "ui-agent": {
+      "mode": "subagent"
+    },
+    "backend-agent": {
+      "mode": "subagent"
+    },
+    "product-agent": {
+      "mode": "subagent"
+    },
+    "qa-agent": {
+      "mode": "subagent"
+    },
+    "devops-agent": {
+      "mode": "subagent"
+    }
+  }
+}

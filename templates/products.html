@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Products{% endblock %}
+{% block content %}
+<section class="section page-header">
+    <div class="container">
+        <h1>Our Products</h1>
+        <p>Fresh, natural juices made from real fruits. Choose your size and place an order.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="product-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <div class="product-image">
+                    {% if product.image %}
+                    <img src="{{ url_for('static', filename='images/' + product.image) }}" alt="{{ product.name }}">
+                    {% else %}
+                    <div class="product-image-placeholder">{{ product.name }}</div>
+                    {% endif %}
+                    {% if product.status == 'coming_soon' %}
+                    <span class="badge badge-coming-soon">Coming Soon</span>
+                    {% else %}
+                    <span class="badge badge-available">Available</span>
+                    {% endif %}
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <p class="product-size">{{ product.size }}</p>
+                    {% if product.status == 'available' %}
+                    <p class="product-price">Rs. {{ product.price }}</p>
+                    <a href="/order/{{ product.id }}" class="btn btn-primary btn-small">Buy Now</a>
+                    {% else %}
+                    <p class="product-price">--</p>
+                    <button class="btn btn-disabled btn-small" disabled>Coming Soon</button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
