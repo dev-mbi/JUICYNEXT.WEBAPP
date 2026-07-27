@@ -13,18 +13,31 @@
         <div class="order-layout">
             <div class="order-product-info">
                 <div class="product-summary-card">
-                    {% if product.image %}
-                    <img src="{{ url_for('static', filename='images/' + product.image) }}" alt="{{ product.name }}">
+                    {% set images = product.image.split(',') if product.image else [] %}
+                    {% if images %}
+                    <div class="product-carousel" data-images='[{% for img in images %}"{{ url_for('static', filename='images/' + img.strip()) }}"{% if not loop.last %},{% endif %}{% endfor %}]'>
+                        <div class="carousel-main">
+                            <button class="carousel-btn carousel-prev" onclick="prevImage(this)" aria-label="Previous">&#10094;</button>
+                            <img id="carouselImg" src="{{ url_for('static', filename='images/' + images[0].strip()) }}" alt="{{ product.name }}">
+                            <button class="carousel-btn carousel-next" onclick="nextImage(this)" aria-label="Next">&#10095;</button>
+                        </div>
+                        <div class="carousel-dots" id="carouselDots">
+                            {% for img in images %}
+                            <span class="carousel-dot{% if loop.first %} active{% endif %}" onclick="goToImage(this.parentElement.parentElement, {{ loop.index0 }})"></span>
+                            {% endfor %}
+                        </div>
+                    </div>
                     {% else %}
                     <div class="product-image-placeholder">{{ product.name }}</div>
                     {% endif %}
-                    <h3>{{ product.name }}</h3>
+                    <h3>{{ product.name | replace('Mango', '<span class="brand-mango">Mango</span>') | safe }}</h3>
                     <p>{{ product.size }}</p>
                     <p class="product-price">Rs. {{ product.price }}</p>
                 </div>
             </div>
             <div class="order-form-container">
                 <form method="POST" action="/submit-order" class="order-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" name="product_id" value="{{ product.id }}">
 
                     <div class="form-group">
@@ -34,7 +47,7 @@
 
                     <div class="form-group">
                         <label for="phone">Phone Number</label>
-                        <input type="tel" id="phone" name="phone" required placeholder="03XX-XXXXXXX">
+                        <input type="tel" id="phone" name="phone" required placeholder="0300-1234567">
                     </div>
 
                     <div class="form-group">
@@ -54,4 +67,49 @@
         </div>
     </div>
 </section>
+<script>
+function getImages(btn) {
+    var carousel = btn.closest('.product-carousel');
+    return JSON.parse(carousel.dataset.images);
+}
+function getCurrentIdx(carousel) {
+    var img = carousel.querySelector('#carouselImg');
+    var images = JSON.parse(carousel.dataset.images);
+    return images.indexOf(img.src);
+}
+function updateImage(carousel, idx) {
+    var images = JSON.parse(carousel.dataset.images);
+    if (idx < 0) idx = images.length - 1;
+    if (idx >= images.length) idx = 0;
+    carousel.querySelector('#carouselImg').src = images[idx];
+    var dots = carousel.querySelectorAll('.carousel-dot');
+    dots.forEach(function(d, i) { d.classList.toggle('active', i === idx); });
+}
+function nextImage(btn) {
+    var carousel = btn.closest('.product-carousel');
+    updateImage(carousel, getCurrentIdx(carousel) + 1);
+}
+function prevImage(btn) {
+    var carousel = btn.closest('.product-carousel');
+    updateImage(carousel, getCurrentIdx(carousel) - 1);
+}
+function goToImage(carousel, idx) {
+    updateImage(carousel, idx);
+}
+document.addEventListener('DOMContentLoaded', function() {
+    var carousel = document.querySelector('.product-carousel');
+    if (!carousel) return;
+    var touchStartX = 0;
+    carousel.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+    }, {passive: true});
+    carousel.addEventListener('touchend', function(e) {
+        var diff = touchStartX - e.changedTouches[0].screenX;
+        if (Math.abs(diff) > 50) {
+            if (diff > 0) nextImage(carousel.querySelector('.carousel-next'));
+            else prevImage(carousel.querySelector('.carousel-prev'));
+        }
+    }, {passive: true});
+});
+</script>
 {% endblock %}

@@ -4,10 +4,14 @@ __pycache__/
 instance/
 .env
 venv/
+.venv/
+.git/
+.gitignore
+.github/
+.opencode/
 *.egg-info/
 dist/
 build/
 .DS_Store
 *.log
-graphify-out/
-nginx.conf
+README.md

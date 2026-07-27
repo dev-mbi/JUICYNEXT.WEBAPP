@@ -1,8 +1,23 @@
 {% extends "admin/base_admin.html" %}
 {% block title %}Orders{% endblock %}
 {% block content %}
-<h1>Orders</h1>
-{% if orders %}
+<div class="admin-header">
+    <h1>Orders</h1>
+    <div>
+        <form method="GET" style="display:inline">
+            <input type="text" name="search" placeholder="Search by name or phone..." value="{{ search }}" style="padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:0.9rem">
+            <select name="status" style="padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:0.9rem">
+                <option value="">All Status</option>
+                <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                <option value="confirmed" {% if status_filter == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                <option value="delivered" {% if status_filter == 'delivered' %}selected{% endif %}>Delivered</option>
+                <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>Cancelled</option>
+            </select>
+            <button type="submit" class="btn btn-small btn-outline">Filter</button>
+        </form>
+    </div>
+</div>
+{% if orders.items %}
 <table class="admin-table">
     <thead>
         <tr>
@@ -11,25 +26,46 @@
             <th>Phone</th>
             <th>Product</th>
             <th>Qty</th>
-            <th>Address</th>
+            <th>Status</th>
             <th>Date</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        {% for order in orders %}
+        {% for order in orders.items %}
         <tr>
-            <td>{{ order.id }}</td>
+            <td><a href="/admin/orders/{{ order.id }}">{{ order.id }}</a></td>
             <td>{{ order.name }}</td>
             <td>{{ order.phone }}</td>
             <td>{{ order.product_name }} ({{ order.size }})</td>
             <td>{{ order.quantity }}</td>
-            <td>{{ order.address }}</td>
+            <td><span class="badge badge-{{ order.status }}">{{ order.status }}</span></td>
             <td>{{ order.created_at.strftime('%d-%m-%Y %H:%M') }}</td>
+            <td>
+                <form method="POST" action="/admin/orders/{{ order.id }}/status" style="display:inline">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <select name="status" onchange="this.form.submit()" style="padding:4px 8px;border:1px solid #ddd;border-radius:4px;font-size:0.85rem">
+                        <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>Pending</option>
+                        <option value="confirmed" {% if order.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                        <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>Delivered</option>
+                        <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                    </select>
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+<div class="pagination" style="margin-top:20px;text-align:center">
+    {% if orders.has_prev %}
+    <a href="?page={{ orders.prev_num }}{% if search %}&search={{ search }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="btn btn-small btn-outline">Previous</a>
+    {% endif %}
+    <span style="margin:0 15px;color:#666">Page {{ orders.page }} of {{ orders.pages }}</span>
+    {% if orders.has_next %}
+    <a href="?page={{ orders.next_num }}{% if search %}&search={{ search }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="btn btn-small btn-outline">Next</a>
+    {% endif %}
+</div>
 {% else %}
-<p class="empty-state">No orders yet.</p>
+<p class="empty-state">{% if search %}No orders found for "{{ search }}".{% else %}No orders yet.{% endif %}</p>
 {% endif %}
 {% endblock %}

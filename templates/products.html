@@ -4,7 +4,7 @@
 <section class="section page-header">
     <div class="container">
         <h1>Our Products</h1>
-        <p>Fresh, natural juices made from real fruits. Choose your size and place an order.</p>
+        <p>Fresh, natural juices. Choose your size and place an order.</p>
     </div>
 </section>
 
@@ -14,8 +14,9 @@
             {% for product in products %}
             <div class="product-card">
                 <div class="product-image">
-                    {% if product.image %}
-                    <img src="{{ url_for('static', filename='images/' + product.image) }}" alt="{{ product.name }}">
+                    {% set images = product.image.split(',') if product.image else [] %}
+                    {% if images %}
+                    <img src="{{ url_for('static', filename='images/' + images[0].strip()) }}" alt="{{ product.name }}">
                     {% else %}
                     <div class="product-image-placeholder">{{ product.name }}</div>
                     {% endif %}
@@ -26,7 +27,7 @@
                     {% endif %}
                 </div>
                 <div class="product-info">
-                    <h3 class="product-name">{{ product.name }}</h3>
+                    <h3 class="product-name">{{ product.name | replace('Mango', '<span class="highlight">Mango</span>') | safe }}</h3>
                     <p class="product-size">{{ product.size }}</p>
                     {% if product.status == 'available' %}
                     <p class="product-price">Rs. {{ product.price }}</p>

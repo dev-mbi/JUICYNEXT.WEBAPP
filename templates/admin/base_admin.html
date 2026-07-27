@@ -4,13 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - JuicyneXt</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='15' fill='%232ECC71'/><text x='50' y='68' font-size='50' text-anchor='middle' fill='%230A0A0A'>J</text></svg>">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body class="admin-page">
     <nav class="admin-nav">
         <div class="container">
-            <a href="/admin" class="logo">JuicyneXt Admin</a>
-            <ul class="admin-nav-links">
+            <a href="/admin" class="logo">
+                <svg width="175" height="36" viewBox="0 0 175 36">
+                    <defs>
+                        <linearGradient id="xtGradAdmin" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#F8E71C"/>
+                            <stop offset="100%" stop-color="#F58220"/>
+                        </linearGradient>
+                    </defs>
+                    <rect width="175" height="36" rx="6" fill="#0A0A0A" stroke="#4AC56B" stroke-width="1.5"/>
+                    <text x="68" y="24" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#4AC56B">Juicyne</text>
+                    <text x="107" y="24" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="url(#xtGradAdmin)">Xt Admin</text>
+                </svg>
+            </a>
+            <button class="nav-toggle admin-nav-toggle" id="adminNavToggle" aria-label="Toggle navigation">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="admin-nav-links" id="adminNavLinks">
                 <li><a href="/admin">Dashboard</a></li>
                 <li><a href="/admin/products">Products</a></li>
                 <li><a href="/admin/orders">Orders</a></li>
@@ -30,5 +46,21 @@
         {% endwith %}
         {% block content %}{% endblock %}
     </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var toggle = document.getElementById('adminNavToggle');
+            var links = document.getElementById('adminNavLinks');
+            if (toggle && links) {
+                toggle.addEventListener('click', function() {
+                    links.classList.toggle('active');
+                });
+                document.addEventListener('click', function(e) {
+                    if (!toggle.contains(e.target) && !links.contains(e.target)) {
+                        links.classList.remove('active');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

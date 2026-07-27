@@ -1,5 +1,5 @@
 from app import db
-from datetime import datetime
+from datetime import datetime, timezone
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -8,7 +8,7 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable=True)
     status = db.Column(db.String(20), default='available')
     image = db.Column(db.String(200), nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     def __repr__(self):
         return f'{self.name} ({self.size})'
@@ -21,7 +21,8 @@ class Order(db.Model):
     product_name = db.Column(db.String(100))
     size = db.Column(db.String(20))
     quantity = db.Column(db.Integer, default=1)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    status = db.Column(db.String(20), default='pending')
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     def __repr__(self):
         return f'Order #{self.id} - {self.name}'

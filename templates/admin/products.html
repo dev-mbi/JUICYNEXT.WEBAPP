@@ -3,8 +3,15 @@
 {% block content %}
 <div class="admin-header">
     <h1>Products</h1>
-    <a href="/admin/products/add" class="btn btn-primary btn-small">Add Product</a>
+    <div>
+        <form method="GET" style="display:inline">
+            <input type="text" name="search" placeholder="Search products..." value="{{ search }}" style="padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:0.9rem">
+            <button type="submit" class="btn btn-small btn-outline">Search</button>
+        </form>
+        <a href="/admin/products/add" class="btn btn-primary btn-small">Add Product</a>
+    </div>
 </div>
+{% if products.items %}
 <table class="admin-table">
     <thead>
         <tr>
@@ -17,7 +24,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for product in products %}
+        {% for product in products.items %}
         <tr>
             <td>{{ product.id }}</td>
             <td>{{ product.name }}</td>
@@ -27,11 +34,13 @@
             <td class="actions">
                 <a href="/admin/products/edit/{{ product.id }}" class="btn btn-small btn-outline">Edit</a>
                 <form method="POST" action="/admin/products/toggle/{{ product.id }}" style="display:inline">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="submit" class="btn btn-small btn-outline">
                         {% if product.status == 'available' %}Disable{% else %}Enable{% endif %}
                     </button>
                 </form>
                 <form method="POST" action="/admin/products/delete/{{ product.id }}" style="display:inline" onsubmit="return confirm('Delete this product?')">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="submit" class="btn btn-small btn-danger">Delete</button>
                 </form>
             </td>
@@ -39,4 +48,16 @@
         {% endfor %}
     </tbody>
 </table>
+<div class="pagination" style="margin-top:20px;text-align:center">
+    {% if products.has_prev %}
+    <a href="?page={{ products.prev_num }}{% if search %}&search={{ search }}{% endif %}" class="btn btn-small btn-outline">Previous</a>
+    {% endif %}
+    <span style="margin:0 15px;color:#666">Page {{ products.page }} of {{ products.pages }}</span>
+    {% if products.has_next %}
+    <a href="?page={{ products.next_num }}{% if search %}&search={{ search }}{% endif %}" class="btn btn-small btn-outline">Next</a>
+    {% endif %}
+</div>
+{% else %}
+<p class="empty-state">{% if search %}No products found for "{{ search }}".{% else %}No products yet.{% endif %}</p>
+{% endif %}
 {% endblock %}
