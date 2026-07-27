@@ -40,6 +40,10 @@ jobs:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
         run: |
+          if [ -z "$SSH_PRIVATE_KEY" ]; then
+            echo "No SSH_PRIVATE_KEY secret set. Skipping deploy."
+            exit 0
+          fi
           echo "$SSH_PRIVATE_KEY" > key.pem
           chmod 600 key.pem
           ssh -o StrictHostKeyChecking=no -i key.pem $SERVER_USER@$SERVER_HOST "
